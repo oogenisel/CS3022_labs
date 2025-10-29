@@ -25,24 +25,35 @@ int main() {
     std::srand(static_cast<unsigned>(std::time(nullptr)));
 
     std::cout << staticWelcomeMessage << "\n";
+    
+    std::cout << "Address of staticWelcomeMessage: " << &staticWelcomeMessage << "\n\n";
 
     std::cout << "Guess the Animal! (1: Dog, 2: Cat, 3: Bird, 4: Fish)\n";
     std::cout << "Enter 0 to quit.\n";
 
-    AnimalUtil::Animal* mysteryAnimal;
+    AnimalUtil::Animal* mysteryAnimal = nullptr;
 
-    // Error #1 - see question #1
-    std::cout << "The animal is initialized to: " << AnimalUtil::toStr(*mysteryAnimal) << "\n";
+    // Error #1 - Commented out uninitialized pointer dereference
+    // std::cout << "The animal is initialized to: " << AnimalUtil::toStr(*mysteryAnimal) << "\n";
     
-    // Error #2 - see question #2
-    mysteryAnimal = nullptr;
-    std::cout << "The animal should initally be nothing: " << AnimalUtil::toStr(*mysteryAnimal) << "\n";
+    // Error #2 - Commented out nullptr dereference
+    // mysteryAnimal = nullptr;
+    // std::cout << "The animal should initally be nothing: " << AnimalUtil::toStr(*mysteryAnimal) << "\n";
     
-    // Error #3 - Figure it out.
+    // Error #3 - Delete before new allocation
     while (true) {
+        if (mysteryAnimal != nullptr) {
+            delete mysteryAnimal;
+        }
+        
         mysteryAnimal =
             new AnimalUtil::Animal(static_cast<AnimalUtil::Animal>(1 + std::rand() % 4));
-
+        
+        std::cout << "Address of pointer variable: " << &mysteryAnimal << "\n";
+        std::cout << "Address pointer points to  : " << mysteryAnimal << "\n";
+        std::cout << "Value at that address      : " << static_cast<int>(*mysteryAnimal)
+                  << " (" << AnimalUtil::toStr(*mysteryAnimal) << ")\n";
+        
         std::cout << "\nYour guess: ";
         int guess = -1;
         if (!(std::cin >> guess)) {
@@ -56,6 +67,11 @@ int main() {
             break;
         }
 
+        if (guess < 1 || guess > 4) {
+            std::cout << "Invalid guess! Please enter 1-4.\n";
+            continue;
+        }
+        
         if (*mysteryAnimal == static_cast<AnimalUtil::Animal>(guess)) {
             std::cout << "Correct! It was " << AnimalUtil::toStr(*mysteryAnimal) << "\n";
         } else {
@@ -63,6 +79,6 @@ int main() {
         }
 
     }
-    delete mysteryAnimal; 
+    delete mysteryAnimal;
     return 0;
 }
